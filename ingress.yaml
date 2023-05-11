@@ -1,0 +1,56 @@
+
+# host based ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: javawebapp-ingress
+  namespace: test-ns
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "javawebapp.rahulrajsingh.in"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: javawebappsvc #service name where triffic to be redirected
+            port:
+              number: 80 #service port of javawebappsvc
+
+
+
+# path based ingress, we can have multiple path in one manifest. 
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pathbased-rules
+  namespace: test-ns
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "rahulrajsingh.in"  # rout53 create external loadbalancer on rahulrajsingh.in
+    http:
+      paths:
+      - path: /java-web-app
+        pathType: Prefix
+        backend:
+          service:
+            name: javawebappsvc #service name where triffic to be redirected, this service is handling javawebapp, rahulrajsing.in/java-web-app wil open java web aplication. 
+            port:
+              number: 80 #service port of javawebappsvc
+      - path: /maven-web-application
+        pathType: Prefix
+        backend:
+          service:
+            tyname: mavenwebappsvc #this service is handling maven web application, if user access rahulrajsingh.in/maven-web-application then maven web appliaction website will open. 
+            port:
+              number: 80 # port of service mavenwebappsvc
+
+
+
